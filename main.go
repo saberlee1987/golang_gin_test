@@ -7,6 +7,7 @@ import (
 	"github.com.saber/golang_gin_test/dto"
 	"github.com.saber/golang_gin_test/hi"
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 	"github.com/swaggo/files"
 	"github.com/swaggo/gin-swagger"
 	"net/http"
@@ -38,8 +39,11 @@ func main() {
 
 	router.GET("/hello", hello)
 	router.GET("/os", os)
-	router.GET("/findAll", findAllPerson)
-	router.POST("/add", addPerson)
+	personRoute := router.Group("/person")
+	{
+		personRoute.GET("/findAll", findAllPerson)
+		personRoute.POST("/add", addPerson)
+	}
 	router.Run(":5000")
 }
 
@@ -78,11 +82,11 @@ func os(context *gin.Context) {
 // HealthCheck godoc
 // @Summary find All person
 // @Description get the status of server.
-// @Tags findAllPerson
+// @Tags person api
 // @Accept */*
 // @Produce json
 // @Success 200 {object}  dto.FindAllPersonResponse
-// @Router /findAll [get]
+// @Router /person/findAll [get]
 func findAllPerson(context *gin.Context) {
 	persons, err := db.FindAllPersons()
 	if err != nil {
@@ -100,21 +104,32 @@ func findAllPerson(context *gin.Context) {
 // HealthCheck godoc
 // @Summary add person
 // @Description post the status of server.
-// @Tags addPerson
+// @Tags person api
 // @Accept application/json
 //@Param personDto body dto.Person true "person body"
 // @Produce json
 // @Success 200 {object}  dto.AddPersonsResponseDto
 // @Failure 400,404,406,500,504 {object} dto.ErrorResponseDto
-// @Router /add [post]
+// @Router /person/add [post]
 func addPerson(context *gin.Context) {
 	var person dto.Person
+
 	err := context.ShouldBindJSON(&person)
 	var errorResponseDto dto.ErrorResponseDto
 	if err != nil {
 		errorResponseDto.Code = -1
-		errorResponseDto.Text = err.Error()
-		context.JSON(http.StatusBadRequest, err)
+		errorResponseDto.Text = "BadRequest"
+		var validations []dto.ValidationDto
+		for _, fieldErr := range err.(validator.ValidationErrors) {
+			validation := dto.ValidationDto{}
+			validation.FieldName = fieldErr.Field()
+			validation.DetailMessage = fmt.Sprintf("Error for %s actual value %s is %s your input %v", fieldErr.StructField(), fieldErr.ActualTag(), fieldErr.Param(), fieldErr.Value())
+			validations = append(validations, validation)
+		}
+		errorResponseDto.Validations = validations
+		fmt.Printf("Error for binding json to person with error %s\n", errorResponseDto)
+		context.JSON(http.StatusBadRequest, errorResponseDto)
+		return
 	}
 	fmt.Printf("Request for add person with body ===> %s\n", person)
 	addPersonResponseDto, errorResponse := db.AddPerson(person)

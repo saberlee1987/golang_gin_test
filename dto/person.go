@@ -6,12 +6,12 @@ import (
 )
 
 type Person struct {
-	Firstname    string `json:"firstname"`
-	LastName     string `json:"lastname"`
-	NationalCode string `json:"nationalCode"`
-	Age          int    `json:"age"`
-	Email        string `json:"email"`
-	Mobile       string `json:"mobile"`
+	Firstname    string `json:"firstname"  binding:"required"`
+	LastName     string `json:"lastname"  binding:"required"`
+	NationalCode string `json:"nationalCode"  binding:"required,min=10,max=10"`
+	Age          int    `json:"age"  binding:"required"`
+	Email        string `json:"email"  binding:"required,email"`
+	Mobile       string `json:"mobile"  binding:"required"`
 }
 
 func (p Person) String() string {

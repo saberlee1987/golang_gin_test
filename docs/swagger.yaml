@@ -55,63 +55,6 @@ info:
   title: saber golang gin
   version: 1.0.0-1400/11/26
 paths:
-  /add:
-    post:
-      consumes:
-      - application/json
-      description: post the status of server.
-      parameters:
-      - description: person body
-        in: body
-        name: personDto
-        required: true
-        schema:
-          $ref: '#/definitions/dto.Person'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/dto.AddPersonsResponseDto'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/dto.ErrorResponseDto'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/dto.ErrorResponseDto'
-        "406":
-          description: Not Acceptable
-          schema:
-            $ref: '#/definitions/dto.ErrorResponseDto'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/dto.ErrorResponseDto'
-        "504":
-          description: Gateway Timeout
-          schema:
-            $ref: '#/definitions/dto.ErrorResponseDto'
-      summary: add person
-      tags:
-      - addPerson
-  /findAll:
-    get:
-      consumes:
-      - '*/*'
-      description: get the status of server.
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/dto.FindAllPersonResponse'
-      summary: find All person
-      tags:
-      - findAllPerson
   /hello:
     get:
       consumes:
@@ -153,6 +96,63 @@ paths:
       summary: os
       tags:
       - os
+  /person/add:
+    post:
+      consumes:
+      - application/json
+      description: post the status of server.
+      parameters:
+      - description: person body
+        in: body
+        name: personDto
+        required: true
+        schema:
+          $ref: '#/definitions/dto.Person'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.AddPersonsResponseDto'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponseDto'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponseDto'
+        "406":
+          description: Not Acceptable
+          schema:
+            $ref: '#/definitions/dto.ErrorResponseDto'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponseDto'
+        "504":
+          description: Gateway Timeout
+          schema:
+            $ref: '#/definitions/dto.ErrorResponseDto'
+      summary: add person
+      tags:
+      - person api
+  /person/findAll:
+    get:
+      consumes:
+      - '*/*'
+      description: get the status of server.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.FindAllPersonResponse'
+      summary: find All person
+      tags:
+      - person api
 schemes:
 - http
 swagger: "2.0"

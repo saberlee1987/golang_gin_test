@@ -25,93 +25,6 @@ const docTemplate_swagger = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/add": {
-            "post": {
-                "description": "post the status of server.",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "addPerson"
-                ],
-                "summary": "add person",
-                "parameters": [
-                    {
-                        "description": "person body",
-                        "name": "personDto",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/dto.Person"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/dto.AddPersonsResponseDto"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponseDto"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponseDto"
-                        }
-                    },
-                    "406": {
-                        "description": "Not Acceptable",
-                        "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponseDto"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponseDto"
-                        }
-                    },
-                    "504": {
-                        "description": "Gateway Timeout",
-                        "schema": {
-                            "$ref": "#/definitions/dto.ErrorResponseDto"
-                        }
-                    }
-                }
-            }
-        },
-        "/findAll": {
-            "get": {
-                "description": "get the status of server.",
-                "consumes": [
-                    "*/*"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "findAllPerson"
-                ],
-                "summary": "find All person",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/dto.FindAllPersonResponse"
-                        }
-                    }
-                }
-            }
-        },
         "/hello": {
             "get": {
                 "description": "get the status of server.",
@@ -169,6 +82,93 @@ const docTemplate_swagger = `{
                         "description": "OK",
                         "schema": {
                             "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/person/add": {
+            "post": {
+                "description": "post the status of server.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "person api"
+                ],
+                "summary": "add person",
+                "parameters": [
+                    {
+                        "description": "person body",
+                        "name": "personDto",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.Person"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.AddPersonsResponseDto"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponseDto"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponseDto"
+                        }
+                    },
+                    "406": {
+                        "description": "Not Acceptable",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponseDto"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponseDto"
+                        }
+                    },
+                    "504": {
+                        "description": "Gateway Timeout",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponseDto"
+                        }
+                    }
+                }
+            }
+        },
+        "/person/findAll": {
+            "get": {
+                "description": "get the status of server.",
+                "consumes": [
+                    "*/*"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "person api"
+                ],
+                "summary": "find All person",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.FindAllPersonResponse"
                         }
                     }
                 }

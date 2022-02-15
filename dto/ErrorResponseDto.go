@@ -6,8 +6,14 @@ import (
 )
 
 type ErrorResponseDto struct {
-	Code int    `json:"code"`
-	Text string `json:"text"`
+	Code        int    `json:"code"`
+	Text        string `json:"text"`
+	Validations []ValidationDto
+}
+
+type ValidationDto struct {
+	FieldName     string
+	DetailMessage string
 }
 
 func (errorResponse ErrorResponseDto) String() string {
