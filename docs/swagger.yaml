@@ -1,0 +1,158 @@
+basePath: /
+definitions:
+  dto.AddPersonsResponseDto:
+    properties:
+      code:
+        type: integer
+      text:
+        type: string
+    type: object
+  dto.ErrorResponseDto:
+    properties:
+      code:
+        type: integer
+      text:
+        type: string
+    type: object
+  dto.FindAllPersonResponse:
+    properties:
+      persons:
+        items:
+          $ref: '#/definitions/dto.Person'
+        type: array
+    type: object
+  dto.HelloDto:
+    properties:
+      message:
+        type: string
+    type: object
+  dto.Person:
+    properties:
+      age:
+        type: integer
+      email:
+        type: string
+      firstname:
+        type: string
+      lastname:
+        type: string
+      mobile:
+        type: string
+      nationalCode:
+        type: string
+    type: object
+host: localhost:5000
+info:
+  contact:
+    email: saberazizi66@yahoo.com
+    name: API Support
+    url: http://www.swagger.io/support
+  description: This is a sample server server.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: saber golang gin
+  version: 1.0.0-1400/11/26
+paths:
+  /add:
+    post:
+      consumes:
+      - application/json
+      description: post the status of server.
+      parameters:
+      - description: person body
+        in: body
+        name: personDto
+        required: true
+        schema:
+          $ref: '#/definitions/dto.Person'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.AddPersonsResponseDto'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponseDto'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponseDto'
+        "406":
+          description: Not Acceptable
+          schema:
+            $ref: '#/definitions/dto.ErrorResponseDto'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponseDto'
+        "504":
+          description: Gateway Timeout
+          schema:
+            $ref: '#/definitions/dto.ErrorResponseDto'
+      summary: add person
+      tags:
+      - addPerson
+  /findAll:
+    get:
+      consumes:
+      - '*/*'
+      description: get the status of server.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.FindAllPersonResponse'
+      summary: find All person
+      tags:
+      - findAllPerson
+  /hello:
+    get:
+      consumes:
+      - '*/*'
+      description: get the status of server.
+      parameters:
+      - description: firstName param
+        in: query
+        name: firstName
+        required: true
+        type: string
+      - description: lastName param
+        in: query
+        name: lastName
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.HelloDto'
+      summary: hello
+      tags:
+      - hello
+  /os:
+    get:
+      consumes:
+      - '*/*'
+      description: get the status of server.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: os
+      tags:
+      - os
+schemes:
+- http
+swagger: "2.0"
