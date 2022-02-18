@@ -8,6 +8,7 @@ import (
 	"github.com.saber/golang_gin_test/hi"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
+	"github.com/penglongli/gin-metrics/ginmetrics"
 	"github.com/swaggo/files"
 	"github.com/swaggo/gin-swagger"
 	"net/http"
@@ -32,6 +33,20 @@ func main() {
 	fmt.Println("Hello World !!!!!!!")
 	fmt.Println(hi.SayHello("Saber", "Azizi"))
 	router := gin.Default()
+
+	m := ginmetrics.GetMonitor()
+
+	// +optional set metric path, default /debug/metrics
+	m.SetMetricPath("/metrics")
+	// +optional set slow time, default 5s
+	m.SetSlowTime(10)
+	// +optional set request duration, default {0.1, 0.3, 1.2, 5, 10}
+	// used to p95, p99
+	m.SetDuration([]float64{0.1, 0.3, 1.2, 5, 10})
+
+	// set middleware for gin
+	m.Use(router)
+
 	docs.SwaggerInfo_swagger.BasePath = "/"
 	docs.SwaggerInfo_swagger.Title = "golang gin swagger"
 	url := ginSwagger.URL("http://localhost:5000/swagger/v3/api-docs/doc.json") // The url pointing to API definition
@@ -44,6 +59,7 @@ func main() {
 		personRoute.GET("/findAll", findAllPerson)
 		personRoute.POST("/add", addPerson)
 	}
+
 	router.Run(":5000")
 }
 
