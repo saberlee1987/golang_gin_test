@@ -19,15 +19,15 @@ func FindAllPersons() ([]dto.Person, error) {
 	}
 	var persons []dto.Person
 
-	rows, err := db.Query("select * from persons")
+	rows, err := db.Query("select firstname,lastname,nationalCode,age,email,mobile from persons")
 
 	if err != nil {
 		return nil, errors.New("can not fetch data from database " + err.Error())
 	}
 	person := dto.Person{}
-	var id = 0
+	//var id = 0
 	for rows.Next() {
-		err := rows.Scan(&id, &person.Age, &person.Email, &person.Firstname, &person.LastName, &person.NationalCode, &person.Mobile)
+		err := rows.Scan(&person.Firstname, &person.LastName, &person.NationalCode, &person.Age, &person.Email, &person.Mobile)
 		if err != nil {
 			return nil, errors.New("can not fetch data from database " + err.Error())
 		}
@@ -88,7 +88,7 @@ func FindPersonByNationalCode(nationalCode string) (*dto.Person, *dto.ErrorRespo
 		errorResponse.Text = err.Error()
 		return nil, &errorResponse
 	}
-	statement, err := db.Prepare("select * from persons p where p.nationalCode=?")
+	statement, err := db.Prepare("select firstname,lastname,nationalCode,age,email,mobile from persons p where p.nationalCode=?")
 	if err != nil {
 		errorResponse.Code = -1
 		errorResponse.Text = err.Error()
@@ -105,8 +105,8 @@ func FindPersonByNationalCode(nationalCode string) (*dto.Person, *dto.ErrorRespo
 		errorResponse.Text = fmt.Sprintf("person with nationalCode %s does not exist", nationalCode)
 		return nil, &errorResponse
 	}
-	var id int
-	err = rows.Scan(&id, &person.Age, &person.Email, &person.Firstname, &person.LastName, &person.NationalCode, &person.Mobile)
+	//var id int
+	err = rows.Scan(&person.Firstname, &person.LastName, &person.NationalCode, &person.Age, &person.Email, &person.Mobile)
 	if err != nil {
 		errorResponse.Code = -1
 		errorResponse.Text = err.Error()
