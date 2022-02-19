@@ -16,7 +16,7 @@ import (
 )
 
 // @title saber golang gin
-// @version 1.0.0-1400/11/26
+// @version 1.0.0-1400/11/30
 // @description This is a sample server server.
 // @termsOfService http://swagger.io/terms/
 
@@ -57,6 +57,8 @@ func main() {
 	personRoute := router.Group("/person")
 	{
 		personRoute.GET("/findAll", findAllPerson)
+		personRoute.GET("/find/:nationalCode", findPersonByNationalCode)
+		personRoute.PUT("/update/:nationalCode", updatePersonByNationalCode)
 		personRoute.POST("/add", addPerson)
 	}
 
@@ -96,7 +98,7 @@ func os(context *gin.Context) {
 }
 
 // HealthCheck godoc
-// @Summary find All person
+// @Summary findAllPerson
 // @Description get the status of server.
 // @Tags person api
 // @Accept */*
@@ -119,25 +121,68 @@ func findAllPerson(context *gin.Context) {
 }
 
 // HealthCheck godoc
-// @Summary find All person
+// @Summary findPersonByNationalCode
 // @Description get the status of server.
 // @Tags person api
 // @Accept */*
 // @Param nationalCode path string true "nationalCode param"
 // @Produce json
-// @Success 200 {object}  dto.FindAllPersonResponse
-// @Router /person/find/:nationalCode [get]
+// @Success 200 {object}  dto.PersonDto
+// @Failure 400,404,406,500,504 {object} dto.ErrorResponseDto
+// @Router /person/find/{nationalCode} [get]
 func findPersonByNationalCode(context *gin.Context) {
 	nationalCode := context.Param("nationalCode")
-	var person dto.PersonDto
-	err := db.FindPersonByNationalCodeOrm(&person, nationalCode)
+	personDto, err := db.FindPersonByNationalCodeOrm(nationalCode)
 	if err != nil {
 		fmt.Println(err)
-		context.JSON(500, gin.H{
-			"error": err,
-		})
+		context.JSON(406, err)
+		return
 	}
-	context.JSON(200, person)
+	context.JSON(200, personDto)
+}
+
+// HealthCheck godoc
+// @Summary update person by nationalCode
+// @Description put the status of server.
+// @Tags person api
+// @Accept */*
+// @Param nationalCode path string true "nationalCode param"
+//@Param personDto body dto.PersonDto true "person body"
+// @Produce json
+// @Success 200 {object}  dto.UpdatePersonsResponseDto
+// @Failure 400,404,406,500,504 {object} dto.ErrorResponseDto
+// @Router /person/update/{nationalCode} [put]
+func updatePersonByNationalCode(context *gin.Context) {
+	nationalCode := context.Param("nationalCode")
+
+	var person dto.PersonDto
+	err := context.ShouldBindJSON(&person)
+	if err != nil {
+		var errorResponseDto dto.ErrorResponseDto
+		errorResponseDto.Code = -1
+		errorResponseDto.Text = "BadRequest"
+		var validations []dto.ValidationDto
+		for _, fieldErr := range err.(validator.ValidationErrors) {
+			validation := dto.ValidationDto{}
+			validation.FieldName = fieldErr.Field()
+			validation.DetailMessage = fmt.Sprintf("Error for %s actual value %s is %s your input %v", fieldErr.StructField(), fieldErr.ActualTag(), fieldErr.Param(), fieldErr.Value())
+			validations = append(validations, validation)
+		}
+		errorResponseDto.Validations = validations
+		fmt.Printf("Error for binding json to person with error %s\n", errorResponseDto)
+		context.JSON(http.StatusBadRequest, errorResponseDto)
+		return
+	}
+	fmt.Printf("Request for update person with nationalCode %s with  body ===> %s\n", nationalCode, person)
+
+	response, errorResponseDto := db.UpdatePersonOrm(person, nationalCode)
+	if errorResponseDto != nil {
+		fmt.Println(errorResponseDto)
+		context.JSON(406, errorResponseDto)
+		return
+	}
+	fmt.Printf("Request for update person with nationalCode %s with respone body ===> %s\n", nationalCode, response)
+	context.JSON(200, response)
 }
 
 // HealthCheck godoc
@@ -171,7 +216,7 @@ func addPerson(context *gin.Context) {
 		return
 	}
 	fmt.Printf("Request for add person with body ===> %s\n", person)
-	addPersonResponseDto, errorResponse := db.AddPerson(person)
+	addPersonResponseDto, errorResponse := db.AddPersonOrm(person)
 	if errorResponse != nil {
 		fmt.Printf("Error for add person with body ===> %s\n", errorResponse)
 		context.JSON(http.StatusNotAcceptable, errorResponse)

@@ -56,6 +56,7 @@ func FindAllPersonsOrm(persons *[]dto.Person) error {
 	if err != nil {
 		return err
 	}
+	defer db.Close()
 	err = db.Find(persons).Error
 	if err != nil {
 		return err
@@ -68,6 +69,7 @@ func FindAllPersons() ([]dto.PersonDto, error) {
 	if err != nil {
 		return nil, errors.New("can not connect to database " + err.Error())
 	}
+	defer db.Close()
 	var persons []dto.PersonDto
 
 	rows, err := db.Query("select firstname,lastname,nationalCode,age,email,mobile from persons")
@@ -88,6 +90,75 @@ func FindAllPersons() ([]dto.PersonDto, error) {
 	return persons, nil
 }
 
+func AddPersonOrm(personDto dto.PersonDto) (*dto.AddPersonsResponseDto, *dto.ErrorResponseDto) {
+	db, err := connectToDataBaseOrm()
+	var errorResponse dto.ErrorResponseDto
+	if err != nil {
+		errorResponse.Code = -1
+		errorResponse.Text = err.Error()
+		return nil, &errorResponse
+	}
+	defer db.Close()
+	response, _ := FindPersonByNationalCodeOrm(personDto.NationalCode)
+	if response != nil {
+		errorResponse.Code = -1
+		errorResponse.Text = fmt.Sprintf("person with nationalCode %s already exist", personDto.NationalCode)
+		return nil, &errorResponse
+	}
+	person := dto.Person{
+		FirstName:    personDto.Firstname,
+		LastName:     personDto.LastName,
+		NationalCode: personDto.NationalCode,
+		Age:          personDto.Age,
+		Email:        personDto.Email,
+		Mobile:       personDto.Mobile,
+	}
+	err = db.Create(&person).Error
+	if err != nil {
+		errorResponse.Code = -1
+		errorResponse.Text = err.Error()
+		return nil, &errorResponse
+	}
+
+	addResponse := dto.AddPersonsResponseDto{Code: 0, Text: "your Data is saved successfully"}
+	return &addResponse, nil
+
+}
+
+func UpdatePersonOrm(personDto dto.PersonDto, nationalCode string) (*dto.UpdatePersonsResponseDto, *dto.ErrorResponseDto) {
+	db, err := connectToDataBaseOrm()
+	var errorResponse dto.ErrorResponseDto
+	if err != nil {
+		errorResponse.Code = -1
+		errorResponse.Text = err.Error()
+		return nil, &errorResponse
+	}
+	defer db.Close()
+	var person dto.Person
+	err = db.Where("nationalCode =?", nationalCode).First(&person).Error
+	if err != nil {
+		errorResponse.Code = -1
+		errorResponse.Text = err.Error()
+		return nil, &errorResponse
+	}
+	person.FirstName = personDto.Firstname
+	person.LastName = personDto.LastName
+	person.NationalCode = personDto.NationalCode
+	person.Age = personDto.Age
+	person.Email = personDto.Email
+	person.Mobile = personDto.Mobile
+
+	err = db.Save(&person).Error
+	if err != nil {
+		errorResponse.Code = -1
+		errorResponse.Text = err.Error()
+		return nil, &errorResponse
+	}
+	updatePersonResponseDto := dto.UpdatePersonsResponseDto{Code: 0, Text: "your Data is updated successfully"}
+	return &updatePersonResponseDto, nil
+
+}
+
 func AddPerson(person dto.PersonDto) (*dto.AddPersonsResponseDto, *dto.ErrorResponseDto) {
 	db, err := connectToDataBase()
 	var errorResponse dto.ErrorResponseDto
@@ -96,6 +167,7 @@ func AddPerson(person dto.PersonDto) (*dto.AddPersonsResponseDto, *dto.ErrorResp
 		errorResponse.Text = err.Error()
 		return nil, &errorResponse
 	}
+	defer db.Close()
 	response, _ := FindPersonByNationalCode(person.NationalCode)
 	if response != nil {
 		errorResponse.Code = -1
@@ -130,21 +202,32 @@ func AddPerson(person dto.PersonDto) (*dto.AddPersonsResponseDto, *dto.ErrorResp
 	}
 }
 
-func FindPersonByNationalCodeOrm(personDto *dto.PersonDto, nationalCode string) *dto.ErrorResponseDto {
+func FindPersonByNationalCodeOrm(nationalCode string) (*dto.PersonDto, *dto.ErrorResponseDto) {
 	db, err := connectToDataBaseOrm()
 	var errorResponse dto.ErrorResponseDto
+	var person dto.Person
 	if err != nil {
 		errorResponse.Code = -1
 		errorResponse.Text = err.Error()
-		return nil
+		return nil, &errorResponse
 	}
-	err = db.Where("nationalCode =?", nationalCode).First(personDto).Error
+	defer db.Close()
+	err = db.Where("nationalCode =?", nationalCode).First(&person).Error
 	if err != nil {
 		errorResponse.Code = -1
 		errorResponse.Text = err.Error()
-		return &errorResponse
+		return nil, &errorResponse
 	}
-	return nil
+	personDto := dto.PersonDto{
+		Firstname:    person.FirstName,
+		LastName:     person.LastName,
+		NationalCode: person.NationalCode,
+		Age:          person.Age,
+		Email:        person.Email,
+		Mobile:       person.Mobile,
+	}
+
+	return &personDto, nil
 }
 
 func FindPersonByNationalCode(nationalCode string) (*dto.PersonDto, *dto.ErrorResponseDto) {

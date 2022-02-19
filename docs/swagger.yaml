@@ -13,6 +13,10 @@ definitions:
         type: integer
       text:
         type: string
+      validations:
+        items:
+          $ref: '#/definitions/dto.ValidationDto'
+        type: array
     type: object
   dto.FindAllPersonResponse:
     properties:
@@ -33,12 +37,55 @@ definitions:
       email:
         type: string
       firstname:
+        description: column name is `firstname`
+        type: string
+      id:
+        type: integer
+      lastname:
+        description: column name is `lastname`
+        type: string
+      mobile:
+        type: string
+      nationalCode:
+        description: column name is `nationalCode`
+        type: string
+    type: object
+  dto.PersonDto:
+    properties:
+      age:
+        type: integer
+      email:
+        type: string
+      firstname:
         type: string
       lastname:
         type: string
       mobile:
         type: string
       nationalCode:
+        maxLength: 10
+        minLength: 10
+        type: string
+    required:
+    - age
+    - email
+    - firstname
+    - lastname
+    - mobile
+    - nationalCode
+    type: object
+  dto.UpdatePersonsResponseDto:
+    properties:
+      code:
+        type: integer
+      text:
+        type: string
+    type: object
+  dto.ValidationDto:
+    properties:
+      detailMessage:
+        type: string
+      fieldName:
         type: string
     type: object
 host: localhost:5000
@@ -53,7 +100,7 @@ info:
     url: http://www.apache.org/licenses/LICENSE-2.0.html
   termsOfService: http://swagger.io/terms/
   title: saber golang gin
-  version: 1.0.0-1400/11/26
+  version: 1.0.0-1400/11/30
 paths:
   /hello:
     get:
@@ -107,7 +154,7 @@ paths:
         name: personDto
         required: true
         schema:
-          $ref: '#/definitions/dto.Person'
+          $ref: '#/definitions/dto.PersonDto'
       produces:
       - application/json
       responses:
@@ -138,6 +185,47 @@ paths:
       summary: add person
       tags:
       - person api
+  /person/find/{nationalCode}:
+    get:
+      consumes:
+      - '*/*'
+      description: get the status of server.
+      parameters:
+      - description: nationalCode param
+        in: path
+        name: nationalCode
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.PersonDto'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponseDto'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponseDto'
+        "406":
+          description: Not Acceptable
+          schema:
+            $ref: '#/definitions/dto.ErrorResponseDto'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponseDto'
+        "504":
+          description: Gateway Timeout
+          schema:
+            $ref: '#/definitions/dto.ErrorResponseDto'
+      summary: findPersonByNationalCode
+      tags:
+      - person api
   /person/findAll:
     get:
       consumes:
@@ -150,7 +238,54 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/dto.FindAllPersonResponse'
-      summary: find All person
+      summary: findAllPerson
+      tags:
+      - person api
+  /person/update/{nationalCode}:
+    put:
+      consumes:
+      - '*/*'
+      description: put the status of server.
+      parameters:
+      - description: nationalCode param
+        in: path
+        name: nationalCode
+        required: true
+        type: string
+      - description: person body
+        in: body
+        name: personDto
+        required: true
+        schema:
+          $ref: '#/definitions/dto.PersonDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.UpdatePersonsResponseDto'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponseDto'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponseDto'
+        "406":
+          description: Not Acceptable
+          schema:
+            $ref: '#/definitions/dto.ErrorResponseDto'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponseDto'
+        "504":
+          description: Gateway Timeout
+          schema:
+            $ref: '#/definitions/dto.ErrorResponseDto'
+      summary: update person by nationalCode
       tags:
       - person api
 schemes:

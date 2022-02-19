@@ -107,7 +107,7 @@ const docTemplate_swagger = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.Person"
+                            "$ref": "#/definitions/dto.PersonDto"
                         }
                     }
                 ],
@@ -116,6 +116,68 @@ const docTemplate_swagger = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/dto.AddPersonsResponseDto"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponseDto"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponseDto"
+                        }
+                    },
+                    "406": {
+                        "description": "Not Acceptable",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponseDto"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponseDto"
+                        }
+                    },
+                    "504": {
+                        "description": "Gateway Timeout",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponseDto"
+                        }
+                    }
+                }
+            }
+        },
+        "/person/find/{nationalCode}": {
+            "get": {
+                "description": "get the status of server.",
+                "consumes": [
+                    "*/*"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "person api"
+                ],
+                "summary": "findPersonByNationalCode",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "nationalCode param",
+                        "name": "nationalCode",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.PersonDto"
                         }
                     },
                     "400": {
@@ -163,12 +225,83 @@ const docTemplate_swagger = `{
                 "tags": [
                     "person api"
                 ],
-                "summary": "find All person",
+                "summary": "findAllPerson",
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/dto.FindAllPersonResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/person/update/{nationalCode}": {
+            "put": {
+                "description": "put the status of server.",
+                "consumes": [
+                    "*/*"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "person api"
+                ],
+                "summary": "update person by nationalCode",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "nationalCode param",
+                        "name": "nationalCode",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "person body",
+                        "name": "personDto",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.PersonDto"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.UpdatePersonsResponseDto"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponseDto"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponseDto"
+                        }
+                    },
+                    "406": {
+                        "description": "Not Acceptable",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponseDto"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponseDto"
+                        }
+                    },
+                    "504": {
+                        "description": "Gateway Timeout",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponseDto"
                         }
                     }
                 }
@@ -195,6 +328,12 @@ const docTemplate_swagger = `{
                 },
                 "text": {
                     "type": "string"
+                },
+                "validations": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.ValidationDto"
+                    }
                 }
             }
         },
@@ -227,6 +366,43 @@ const docTemplate_swagger = `{
                     "type": "string"
                 },
                 "firstname": {
+                    "description": "column name is ` + "`" + `firstname` + "`" + `",
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "lastname": {
+                    "description": "column name is ` + "`" + `lastname` + "`" + `",
+                    "type": "string"
+                },
+                "mobile": {
+                    "type": "string"
+                },
+                "nationalCode": {
+                    "description": "column name is ` + "`" + `nationalCode` + "`" + `",
+                    "type": "string"
+                }
+            }
+        },
+        "dto.PersonDto": {
+            "type": "object",
+            "required": [
+                "age",
+                "email",
+                "firstname",
+                "lastname",
+                "mobile",
+                "nationalCode"
+            ],
+            "properties": {
+                "age": {
+                    "type": "integer"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "firstname": {
                     "type": "string"
                 },
                 "lastname": {
@@ -236,6 +412,30 @@ const docTemplate_swagger = `{
                     "type": "string"
                 },
                 "nationalCode": {
+                    "type": "string",
+                    "maxLength": 10,
+                    "minLength": 10
+                }
+            }
+        },
+        "dto.UpdatePersonsResponseDto": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "text": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.ValidationDto": {
+            "type": "object",
+            "properties": {
+                "detailMessage": {
+                    "type": "string"
+                },
+                "fieldName": {
                     "type": "string"
                 }
             }
@@ -245,7 +445,7 @@ const docTemplate_swagger = `{
 
 // SwaggerInfo_swagger holds exported Swagger Info so clients can modify it
 var SwaggerInfo_swagger = &swag.Spec{
-	Version:          "1.0.0-1400/11/26",
+	Version:          "1.0.0-1400/11/30",
 	Host:             "localhost:5000",
 	BasePath:         "/",
 	Schemes:          []string{"http"},
