@@ -1,3 +1,5 @@
 swag init -g main.go
 
 https://golangexample.com/gin-gonic-gin-metrics-exporter-for-prometheus/
+
+https://github.com/SudeepTimalsina/first-go/blob/master/Models/User.go

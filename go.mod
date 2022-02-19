@@ -7,8 +7,8 @@ require (
 	github.com/go-playground/validator/v10 v10.5.0
 	github.com/go-sql-driver/mysql v1.6.0
 	github.com/penglongli/gin-metrics v0.1.10
-	github.com/swaggo/files v0.0.0-20190704085106-630677cd5c14
-	github.com/swaggo/gin-swagger v1.3.0
+	github.com/swaggo/files v0.0.0-20210815190702-a29dd2bc99b2
+	github.com/swaggo/gin-swagger v1.4.1
 	github.com/swaggo/swag v1.7.9
 )
 
@@ -27,7 +27,7 @@ require (
 	github.com/go-playground/locales v0.13.0 // indirect
 	github.com/go-playground/universal-translator v0.17.0 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
-	github.com/jinzhu/gorm v1.9.16 // indirect
+	github.com/jinzhu/gorm v1.9.16
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/leodido/go-urn v1.2.1 // indirect

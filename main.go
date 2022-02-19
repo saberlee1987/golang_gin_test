@@ -104,7 +104,8 @@ func os(context *gin.Context) {
 // @Success 200 {object}  dto.FindAllPersonResponse
 // @Router /person/findAll [get]
 func findAllPerson(context *gin.Context) {
-	persons, err := db.FindAllPersons()
+	var persons []dto.Person
+	err := db.FindAllPersonsOrm(&persons)
 	if err != nil {
 		fmt.Println(err)
 		context.JSON(500, gin.H{
@@ -118,17 +119,39 @@ func findAllPerson(context *gin.Context) {
 }
 
 // HealthCheck godoc
+// @Summary find All person
+// @Description get the status of server.
+// @Tags person api
+// @Accept */*
+// @Param nationalCode path string true "nationalCode param"
+// @Produce json
+// @Success 200 {object}  dto.FindAllPersonResponse
+// @Router /person/find/:nationalCode [get]
+func findPersonByNationalCode(context *gin.Context) {
+	nationalCode := context.Param("nationalCode")
+	var person dto.PersonDto
+	err := db.FindPersonByNationalCodeOrm(&person, nationalCode)
+	if err != nil {
+		fmt.Println(err)
+		context.JSON(500, gin.H{
+			"error": err,
+		})
+	}
+	context.JSON(200, person)
+}
+
+// HealthCheck godoc
 // @Summary add person
 // @Description post the status of server.
 // @Tags person api
 // @Accept application/json
-//@Param personDto body dto.Person true "person body"
+//@Param personDto body dto.PersonDto true "person body"
 // @Produce json
 // @Success 200 {object}  dto.AddPersonsResponseDto
 // @Failure 400,404,406,500,504 {object} dto.ErrorResponseDto
 // @Router /person/add [post]
 func addPerson(context *gin.Context) {
-	var person dto.Person
+	var person dto.PersonDto
 
 	err := context.ShouldBindJSON(&person)
 	var errorResponseDto dto.ErrorResponseDto
