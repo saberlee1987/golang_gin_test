@@ -27,6 +27,11 @@ const docTemplate_swagger = `{
     "paths": {
         "/hello": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "get the status of server.",
                 "consumes": [
                     "*/*"
@@ -66,6 +71,11 @@ const docTemplate_swagger = `{
         },
         "/os": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "get the status of server.",
                 "consumes": [
                     "*/*"
@@ -89,6 +99,11 @@ const docTemplate_swagger = `{
         },
         "/person/add": {
             "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "post the status of server.",
                 "consumes": [
                     "application/json"
@@ -151,8 +166,80 @@ const docTemplate_swagger = `{
                 }
             }
         },
+        "/person/delete/{nationalCode}": {
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "get the status of server.",
+                "consumes": [
+                    "*/*"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "person api"
+                ],
+                "summary": "deletePersonByNationalCode",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "nationalCode param",
+                        "name": "nationalCode",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.DeletePersonResponseDto"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponseDto"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponseDto"
+                        }
+                    },
+                    "406": {
+                        "description": "Not Acceptable",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponseDto"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponseDto"
+                        }
+                    },
+                    "504": {
+                        "description": "Gateway Timeout",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponseDto"
+                        }
+                    }
+                }
+            }
+        },
         "/person/find/{nationalCode}": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "get the status of server.",
                 "consumes": [
                     "*/*"
@@ -215,6 +302,11 @@ const docTemplate_swagger = `{
         },
         "/person/findAll": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "get the status of server.",
                 "consumes": [
                     "*/*"
@@ -238,6 +330,11 @@ const docTemplate_swagger = `{
         },
         "/person/update/{nationalCode}": {
             "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "put the status of server.",
                 "consumes": [
                     "*/*"
@@ -310,6 +407,17 @@ const docTemplate_swagger = `{
     },
     "definitions": {
         "dto.AddPersonsResponseDto": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "text": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.DeletePersonResponseDto": {
             "type": "object",
             "properties": {
                 "code": {
@@ -397,24 +505,30 @@ const docTemplate_swagger = `{
             ],
             "properties": {
                 "age": {
-                    "type": "integer"
+                    "type": "integer",
+                    "example": 35
                 },
                 "email": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "saberazizi66@yahoo.com"
                 },
                 "firstname": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "saber"
                 },
                 "lastname": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "azizi"
                 },
                 "mobile": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "09365627895"
                 },
                 "nationalCode": {
                     "type": "string",
                     "maxLength": 10,
-                    "minLength": 10
+                    "minLength": 10,
+                    "example": "0079028748"
                 }
             }
         },
@@ -439,6 +553,13 @@ const docTemplate_swagger = `{
                     "type": "string"
                 }
             }
+        }
+    },
+    "securityDefinitions": {
+        "ApiKeyAuth": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
         }
     }
 }`

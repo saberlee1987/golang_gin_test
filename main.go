@@ -29,6 +29,9 @@ import (
 // @host localhost:5000
 // @BasePath /
 // @schemes http
+// @securityDefinitions.apikey ApiKeyAuth
+// @in header
+// @name Authorization
 func main() {
 	fmt.Println("Hello World !!!!!!!")
 	fmt.Println(hi.SayHello("Saber", "Azizi"))
@@ -59,6 +62,7 @@ func main() {
 		personRoute.GET("/findAll", findAllPerson)
 		personRoute.GET("/find/:nationalCode", findPersonByNationalCode)
 		personRoute.PUT("/update/:nationalCode", updatePersonByNationalCode)
+		personRoute.DELETE("/delete/:nationalCode", deletePersonByNationalCode)
 		personRoute.POST("/add", addPerson)
 	}
 
@@ -75,6 +79,10 @@ func main() {
 // @Produce json
 // @Success 200 {object} dto.HelloDto
 // @Router /hello [get]
+// @securityDefinitions.apikey ApiKeyAuth
+// @in header
+// @name Authorization
+// @Security ApiKeyAuth
 func hello(context *gin.Context) {
 	firstName := context.Query("firstName")
 	lastName := context.Query("lastName")
@@ -93,6 +101,10 @@ func hello(context *gin.Context) {
 // @Produce json
 // @Success 200 {string} string
 // @Router /os [get]
+// @securityDefinitions.apikey ApiKeyAuth
+// @in header
+// @name Authorization
+// @Security ApiKeyAuth
 func os(context *gin.Context) {
 	context.String(200, runtime.GOOS)
 }
@@ -105,6 +117,10 @@ func os(context *gin.Context) {
 // @Produce json
 // @Success 200 {object}  dto.FindAllPersonResponse
 // @Router /person/findAll [get]
+// @securityDefinitions.apikey ApiKeyAuth
+// @in header
+// @name Authorization
+// @Security ApiKeyAuth
 func findAllPerson(context *gin.Context) {
 	var persons []dto.Person
 	err := db.FindAllPersonsOrm(&persons)
@@ -130,6 +146,10 @@ func findAllPerson(context *gin.Context) {
 // @Success 200 {object}  dto.PersonDto
 // @Failure 400,404,406,500,504 {object} dto.ErrorResponseDto
 // @Router /person/find/{nationalCode} [get]
+// @securityDefinitions.apikey ApiKeyAuth
+// @in header
+// @name Authorization
+// @Security ApiKeyAuth
 func findPersonByNationalCode(context *gin.Context) {
 	nationalCode := context.Param("nationalCode")
 	personDto, err := db.FindPersonByNationalCodeOrm(nationalCode)
@@ -139,6 +159,31 @@ func findPersonByNationalCode(context *gin.Context) {
 		return
 	}
 	context.JSON(200, personDto)
+}
+
+// HealthCheck godoc
+// @Summary deletePersonByNationalCode
+// @Description get the status of server.
+// @Tags person api
+// @Accept */*
+// @Param nationalCode path string true "nationalCode param"
+// @Produce json
+// @Success 200 {object}  dto.DeletePersonResponseDto
+// @Failure 400,404,406,500,504 {object} dto.ErrorResponseDto
+// @Router /person/delete/{nationalCode} [delete]
+// @securityDefinitions.apikey ApiKeyAuth
+// @in header
+// @name Authorization
+// @Security ApiKeyAuth
+func deletePersonByNationalCode(context *gin.Context) {
+	nationalCode := context.Param("nationalCode")
+	response, err := db.DeletePersonByNationalCodeOrm(nationalCode)
+	if err != nil {
+		fmt.Println(err)
+		context.JSON(406, err)
+		return
+	}
+	context.JSON(200, response)
 }
 
 // HealthCheck godoc
@@ -152,6 +197,10 @@ func findPersonByNationalCode(context *gin.Context) {
 // @Success 200 {object}  dto.UpdatePersonsResponseDto
 // @Failure 400,404,406,500,504 {object} dto.ErrorResponseDto
 // @Router /person/update/{nationalCode} [put]
+// @securityDefinitions.apikey ApiKeyAuth
+// @in header
+// @name Authorization
+// @Security ApiKeyAuth
 func updatePersonByNationalCode(context *gin.Context) {
 	nationalCode := context.Param("nationalCode")
 
@@ -195,6 +244,10 @@ func updatePersonByNationalCode(context *gin.Context) {
 // @Success 200 {object}  dto.AddPersonsResponseDto
 // @Failure 400,404,406,500,504 {object} dto.ErrorResponseDto
 // @Router /person/add [post]
+// @securityDefinitions.apikey ApiKeyAuth
+// @in header
+// @name Authorization
+// @Security ApiKeyAuth
 func addPerson(context *gin.Context) {
 	var person dto.PersonDto
 

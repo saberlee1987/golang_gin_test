@@ -29,12 +29,12 @@ func (p Person) String() string {
 }
 
 type PersonDto struct {
-	Firstname    string `json:"firstname"  binding:"required"`
-	LastName     string `json:"lastname"  binding:"required"`
-	NationalCode string `json:"nationalCode"  binding:"required,min=10,max=10"`
-	Age          int    `json:"age"  binding:"required"`
-	Email        string `json:"email"  binding:"required,email"`
-	Mobile       string `json:"mobile"  binding:"required"`
+	Firstname    string `json:"firstname"  binding:"required" example:"saber"`
+	LastName     string `json:"lastname"  binding:"required" example:"azizi"`
+	NationalCode string `json:"nationalCode"  binding:"required,min=10,max=10" example:"0079028748"`
+	Age          int    `json:"age"  binding:"required" example:"35"`
+	Email        string `json:"email"  binding:"required,email" example:"saberazizi66@yahoo.com"`
+	Mobile       string `json:"mobile"  binding:"required" example:"09365627895"`
 }
 
 func (p PersonDto) String() string {

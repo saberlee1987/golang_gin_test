@@ -229,7 +229,33 @@ func FindPersonByNationalCodeOrm(nationalCode string) (*dto.PersonDto, *dto.Erro
 
 	return &personDto, nil
 }
+func DeletePersonByNationalCodeOrm(nationalCode string) (*dto.DeletePersonResponseDto, *dto.ErrorResponseDto) {
+	db, err := connectToDataBaseOrm()
+	var errorResponse dto.ErrorResponseDto
+	var person dto.Person
+	if err != nil {
+		errorResponse.Code = -1
+		errorResponse.Text = err.Error()
+		return nil, &errorResponse
+	}
+	defer db.Close()
 
+	err = db.Where("nationalCode =?", nationalCode).First(&person).Error
+	if err != nil {
+		errorResponse.Code = -1
+		errorResponse.Text = err.Error()
+		return nil, &errorResponse
+	}
+	err = db.Delete(person).Error
+	if err != nil {
+		errorResponse.Code = -1
+		errorResponse.Text = err.Error()
+		return nil, &errorResponse
+	}
+	deletePersonResponseDto := dto.DeletePersonResponseDto{Code: 0, Text: "your Data is deleted successfully"}
+	return &deletePersonResponseDto, nil
+
+}
 func FindPersonByNationalCode(nationalCode string) (*dto.PersonDto, *dto.ErrorResponseDto) {
 	db, err := connectToDataBase()
 	var errorResponse dto.ErrorResponseDto

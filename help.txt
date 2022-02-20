@@ -3,3 +3,7 @@ swag init -g main.go
 https://golangexample.com/gin-gonic-gin-metrics-exporter-for-prometheus/
 
 https://github.com/SudeepTimalsina/first-go/blob/master/Models/User.go
+
+https://martinheinz.dev/blog/9
+
+https://www.soberkoder.com/swagger-go-api-swaggo/

@@ -7,6 +7,13 @@ definitions:
       text:
         type: string
     type: object
+  dto.DeletePersonResponseDto:
+    properties:
+      code:
+        type: integer
+      text:
+        type: string
+    type: object
   dto.ErrorResponseDto:
     properties:
       code:
@@ -53,16 +60,22 @@ definitions:
   dto.PersonDto:
     properties:
       age:
+        example: 35
         type: integer
       email:
+        example: saberazizi66@yahoo.com
         type: string
       firstname:
+        example: saber
         type: string
       lastname:
+        example: azizi
         type: string
       mobile:
+        example: "09365627895"
         type: string
       nationalCode:
+        example: "0079028748"
         maxLength: 10
         minLength: 10
         type: string
@@ -125,6 +138,8 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/dto.HelloDto'
+      security:
+      - ApiKeyAuth: []
       summary: hello
       tags:
       - hello
@@ -140,6 +155,8 @@ paths:
           description: OK
           schema:
             type: string
+      security:
+      - ApiKeyAuth: []
       summary: os
       tags:
       - os
@@ -182,7 +199,52 @@ paths:
           description: Gateway Timeout
           schema:
             $ref: '#/definitions/dto.ErrorResponseDto'
+      security:
+      - ApiKeyAuth: []
       summary: add person
+      tags:
+      - person api
+  /person/delete/{nationalCode}:
+    delete:
+      consumes:
+      - '*/*'
+      description: get the status of server.
+      parameters:
+      - description: nationalCode param
+        in: path
+        name: nationalCode
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.DeletePersonResponseDto'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponseDto'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponseDto'
+        "406":
+          description: Not Acceptable
+          schema:
+            $ref: '#/definitions/dto.ErrorResponseDto'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponseDto'
+        "504":
+          description: Gateway Timeout
+          schema:
+            $ref: '#/definitions/dto.ErrorResponseDto'
+      security:
+      - ApiKeyAuth: []
+      summary: deletePersonByNationalCode
       tags:
       - person api
   /person/find/{nationalCode}:
@@ -223,6 +285,8 @@ paths:
           description: Gateway Timeout
           schema:
             $ref: '#/definitions/dto.ErrorResponseDto'
+      security:
+      - ApiKeyAuth: []
       summary: findPersonByNationalCode
       tags:
       - person api
@@ -238,6 +302,8 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/dto.FindAllPersonResponse'
+      security:
+      - ApiKeyAuth: []
       summary: findAllPerson
       tags:
       - person api
@@ -285,9 +351,16 @@ paths:
           description: Gateway Timeout
           schema:
             $ref: '#/definitions/dto.ErrorResponseDto'
+      security:
+      - ApiKeyAuth: []
       summary: update person by nationalCode
       tags:
       - person api
 schemes:
 - http
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"
