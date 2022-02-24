@@ -6,6 +6,7 @@ import (
 	docs "github.com.saber/golang_gin_test/docs"
 	"github.com.saber/golang_gin_test/dto"
 	"github.com.saber/golang_gin_test/hi"
+	"github.com.saber/golang_gin_test/soap"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 	"github.com/penglongli/gin-metrics/ginmetrics"
@@ -35,6 +36,16 @@ import (
 func main() {
 	fmt.Println("Hello World !!!!!!!")
 	fmt.Println(hi.SayHello("Saber", "Azizi"))
+
+	var result string
+	err := soap.SoapCallHandleResponse("https://localhost:9091/soapServices/personSoap", "FindAll", "", &result)
+
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+
+	fmt.Println(result)
+
 	router := gin.Default()
 
 	m := ginmetrics.GetMonitor()
