@@ -6,9 +6,8 @@ type Envelope struct {
 	XMLName      xml.Name `xml:"soapenv:Envelope"`
 	XmlnsSoapenv string   `xml:"xmlns:soapenv,attr"`
 	XmlnsUniv    string   `xml:"xmlns:univ,attr"`
-
-	Header *Header
-	Body   *Body
+	Header       *Header
+	Body         *Body
 }
 
 type Body struct {
@@ -37,6 +36,19 @@ type UsernameToken struct {
 	Password *Password
 	Nonce    *Nonce
 	Created  *Created
+}
+
+type FindAll struct {
+	XMLName xml.Name `xml:"univ:FindAll"`
+}
+type FindPersonByNationalCode struct {
+	XMLName xml.Name `xml:"univ:FindByNationalCode"`
+	Payload interface{}
+}
+
+type NationalCode struct {
+	XMLName xml.Name `xml:"univ:nationalCode"`
+	Payload interface{}
 }
 
 type Username struct {

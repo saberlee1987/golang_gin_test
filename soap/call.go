@@ -5,6 +5,7 @@ import (
 	"crypto/tls"
 	"encoding/xml"
 	"errors"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"regexp"
@@ -14,7 +15,7 @@ import (
 func soapCall(ws string, action string, payloadInterface interface{}) ([]byte, error) {
 	v := &Envelope{
 		XmlnsSoapenv: "http://schemas.xmlsoap.org/soap/envelope/",
-		XmlnsUniv:    "http://www.example.pl/ws/test/universal",
+		XmlnsUniv:    "http://services.soap.spring_camel_cxf_soap_provider.saber.com/",
 		Header: &Header{
 			WsseSecurity: &WsseSecurity{
 				MustUnderstand: "1",
@@ -34,12 +35,12 @@ func soapCall(ws string, action string, payloadInterface interface{}) ([]byte, e
 	v.Header.WsseSecurity.UsernameToken.Username.Value = "saber66"
 	v.Header.WsseSecurity.UsernameToken.Password.Value = "saber@123"
 	v.Body = &Body{
-		XMLName: xml.Name{
-			Local: "http://com.saber.spring_camel_cxf_soap_provider.soap.services/",
-		},
+		Payload: payloadInterface,
 	}
 
 	payload, err := xml.MarshalIndent(v, "", "  ")
+
+	fmt.Println(string(payload))
 
 	timeout := time.Duration(30 * time.Second)
 	tr := &http.Transport{
@@ -67,18 +68,12 @@ func soapCall(ws string, action string, payloadInterface interface{}) ([]byte, e
 	}
 	defer res.Body.Close()
 
-	rawbody, err := ioutil.ReadAll(res.Body)
-	if len(rawbody) == 0 {
+	rawBody, err := ioutil.ReadAll(res.Body)
+	if len(rawBody) == 0 {
 		return nil, errors.New("Empty response")
 	}
 
-	soapResponse, err := SoapFomMTOM(rawbody)
-	if err != nil {
-		return nil, err
-	}
-
-	// test for fault
-	err = checkFault(soapResponse)
+	soapResponse, err := SoapFomMTOM(rawBody)
 	if err != nil {
 		return nil, err
 	}
@@ -105,13 +100,13 @@ func checkFault(soapResponse []byte) error {
 
 	fault := xmlEnvelope.ResponseBodyBody.Fault
 	if fault.XMLName.Local == "Fault" {
-		sFault := fault.Code + " | " + fault.String + " | " + fault.Actor + " | " + fault.Detail
+		sFault := fault.Code + " | " + fault.FaultString + " | " + fault.Actor + " | " + fault.Detail + "\n"
 		return errors.New(sFault)
 	}
 
 	return nil
 }
-func SoapCallHandleResponse(ws string, action string, payloadInterface interface{}, result interface{}) error {
+func CallHandleResponse(ws string, action string, payloadInterface interface{}, result interface{}) error {
 	body, err := soapCall(ws, action, payloadInterface)
 	if err != nil {
 		return err

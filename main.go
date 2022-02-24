@@ -37,14 +37,29 @@ func main() {
 	fmt.Println("Hello World !!!!!!!")
 	fmt.Println(hi.SayHello("Saber", "Azizi"))
 
-	var result string
-	err := soap.SoapCallHandleResponse("https://localhost:9091/soapServices/personSoap", "FindAll", "", &result)
+	result := soap.ResponseEnvelope{}
+	err := soap.CallHandleResponse("https://localhost:9091/soapServices/personSoap", "FindAll", &soap.FindAll{}, &result)
 
 	if err != nil {
 		fmt.Println(err.Error())
 	}
 
 	fmt.Println(result)
+
+	//
+	//	findByNationalCode:=soap.FindPersonByNationalCode{
+	//		Payload: &soap.NationalCode{
+	//			Payload: "0079028748",
+	//		},
+	//	}
+	//
+	//err = soap.CallHandleResponse("https://localhost:9091/soapServices/personSoap", "FindByNationalCode", findByNationalCode, &result)
+	//
+	//if err != nil {
+	//	fmt.Println(err.Error())
+	//}
+	//
+	//fmt.Println(result)
 
 	router := gin.Default()
 
